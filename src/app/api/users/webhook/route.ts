@@ -56,11 +56,17 @@ export async function POST(req: Request) {
 
   if (eventType === "user.created") {
     const data = evt.data;
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, data.id))
+      .limit(1);
+    if (existingUser) return;
     await db.insert(users).values({
       clerkId: data.id,
       name: `${data.first_name} ${data.last_name}`,
       imageUrl: data.image_url,
-      email: data.primary_email_address_id as string,
+      email: data.email_addresses[0].email_address as string,
     });
   }
 
@@ -69,11 +75,23 @@ export async function POST(req: Request) {
     if (!data.id) {
       return new Response("Missing user id", { status: 400 });
     }
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, data.id))
+      .limit(1);
+    if (!existingUser) return;
     await db.delete(users).where(eq(users.clerkId, data.id));
   }
 
   if (eventType === "user.updated") {
     const { data } = evt;
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, data.id))
+      .limit(1);
+    if (!existingUser) return;
     await db
       .update(users)
       .set({
