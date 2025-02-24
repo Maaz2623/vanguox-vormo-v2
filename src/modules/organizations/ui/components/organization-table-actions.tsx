@@ -27,7 +27,7 @@ export const OrganizationTableActions = ({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={`outline`}
+          variant={`ghost`}
           size={`icon`}
           className="size-7"
           onClick={(e) => e.stopPropagation()}
