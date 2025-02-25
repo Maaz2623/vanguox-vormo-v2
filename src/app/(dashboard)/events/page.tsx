@@ -23,6 +23,8 @@ const HomePage = () => {
         components={<Button>+ New</Button>}
       />
       <Separator />
+
+      {/* Search Component */}
       <div className="h-12 rounded-lg flex justify-start items-center overflow-hidden gap-x-4">
         <div className="flex justify-start items-center border rounded-lg focus-visible:ring-2">
           <div className="size-9 flex justify-center items-center">
@@ -35,6 +37,7 @@ const HomePage = () => {
           />
         </div>
 
+        {/* Select Dropdown */}
         <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Theme" />
@@ -46,6 +49,8 @@ const HomePage = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Event Cards Container  */}
       <div className=" min-h-screen flex md:justify-start justify-center flex-wrap gap-y-8 gap-x-8 p-2">
         {events.map((event) => (
           <EventCard
