@@ -29,7 +29,7 @@ export const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarGeneralItems.map((item) => {
-                const isActive = item.url === pathname;
+                const isActive = item.url.includes(pathname);
 
                 return (
                   <SidebarMenuItem key={item.title} className="">

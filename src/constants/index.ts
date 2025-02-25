@@ -1,4 +1,5 @@
 import { Building, CreditCard, Home, Search } from "lucide-react";
+import { Exo_2, Poppins } from "next/font/google";
 
 // Menu items.
 export const sidebarGeneralItems = [
@@ -62,5 +63,33 @@ export const organizations = [
   },
 ];
 
+export const events = [
+  {
+    id: "org-123",
+    name: "Tech Innovators",
+    slug: "tech-innovators",
+  },
+  {
+    id: "org-456",
+    name: "Code Masters",
+    slug: "code-masters",
+  },
+  {
+    id: "org-789",
+    name: "AI Pioneers",
+    slug: "ai-pioneers",
+  },
+];
+
+export const eventTags = ["contingent", "individual"];
 
 export const isOwner = true;
+
+export const exo2 = Exo_2({
+  subsets: ["latin"],
+});
+
+export const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400"],
+});
