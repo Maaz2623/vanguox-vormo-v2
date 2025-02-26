@@ -44,9 +44,7 @@ export const OrganizationTableActions = ({
         </DropdownMenuItem>
         {isOwner && (
           <DropdownMenuItem asChild className="flex justify-start items-center">
-            <Link
-              href={`/dashboard/organizations/${organizationSlug}/settings`}
-            >
+            <Link href={`/organizations/${organizationSlug}/settings`}>
               <SettingsIcon />
               <p className="mr-2">Settings</p>
             </Link>
