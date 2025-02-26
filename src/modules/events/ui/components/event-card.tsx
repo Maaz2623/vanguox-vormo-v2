@@ -27,7 +27,7 @@ const EventCard = ({ id, name, slug }: EventCardProps) => {
           <div className="h-[50%] w-full bg-neutral-200" />
 
           {/* Event Details */}
-          <div className="p-2 flex-1">
+          <div className="px-3 py-2 flex-1">
             <h2 className="text-lg font-medium">{name}</h2>
             <p className="text-sm text-muted-foreground">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum,

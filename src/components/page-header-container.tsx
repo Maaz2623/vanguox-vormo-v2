@@ -3,7 +3,7 @@ import React from "react";
 interface PageHeaderContainerProps {
   title: string;
   description: string;
-  components: React.ReactNode;
+  components?: React.ReactNode;
 }
 
 const PageHeaderContainer = ({

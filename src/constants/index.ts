@@ -93,3 +93,102 @@ export const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400"],
 });
+
+export const rules = [
+  "Only registered users can participate",
+  "Age 18+ required",
+  "Students only",
+  "VIP members get priority access",
+  "Staff-only section",
+  "Verified accounts required",
+  "Event participants only",
+  "No duplicate registrations allowed",
+  "Entry closes 10 minutes before the event",
+  "Follow community guidelines",
+];
+
+export const tags = [
+  "Contingent",
+  "Eligible",
+  "Restricted",
+  "Exclusive",
+  "Qualified",
+  "Authorized",
+  "Permitted",
+  "Limited",
+  "Approved",
+  "Designated",
+  "Entitled",
+];
+
+export const competitions = [
+  {
+    label: "Code Clash",
+    description:
+      "A competitive coding challenge where participants solve algorithmic problems within a time limit.",
+    prize: "₹10,000",
+    teamSize: 1,
+  },
+  {
+    label: "Tech Quiz Showdown",
+    description:
+      "A fast-paced quiz competition testing participants' knowledge of technology and programming.",
+    prize: "₹5,000",
+    teamSize: 2,
+  },
+  {
+    label: "Bug Bounty Hunt",
+    description:
+      "Participants analyze code snippets to find and fix hidden bugs within a time frame.",
+    prize: "₹8,000",
+    teamSize: 1,
+  },
+  {
+    label: "AI Bot Battle",
+    description:
+      "Teams develop AI-powered bots to compete in a strategic game.",
+    prize: "₹12,000",
+    teamSize: 3,
+  },
+  {
+    label: "Hackathon Sprint",
+    description:
+      "A 24-hour hackathon where teams build innovative solutions for real-world problems.",
+    prize: "₹25,000",
+    teamSize: 4,
+  },
+  {
+    label: "Reverse Engineering Challenge",
+    description:
+      "Decode and break down software or algorithms to understand their logic.",
+    prize: "₹7,500",
+    teamSize: 2,
+  },
+  {
+    label: "Web Dev Face-Off",
+    description:
+      "Participants build a web app in a limited time with a surprise theme.",
+    prize: "₹15,000",
+    teamSize: 3,
+  },
+  {
+    label: "Gaming Tournament",
+    description: "Compete in popular e-sports games for glory and prizes.",
+    prize: "₹20,000",
+    teamSize: 5,
+  },
+  {
+    label: "Cyber Security CTF",
+    description:
+      "A Capture The Flag event where participants solve security-related challenges.",
+    prize: "₹18,000",
+    teamSize: 3,
+  },
+  {
+    label: "Design Derby",
+    description:
+      "UI/UX designers compete to create the most user-friendly and aesthetic interface.",
+    prize: "₹10,000",
+    teamSize: 2,
+  },
+];
