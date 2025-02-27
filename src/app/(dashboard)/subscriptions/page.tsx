@@ -5,7 +5,7 @@ import React from "react";
 
 const SubscriptionsPage = () => {
   return (
-    <div className="">
+    <div className="space-y-4">
       <PageHeaderContainer
         title="Vormo Subscriptions"
         description="All your past and ongoing subscriptions"

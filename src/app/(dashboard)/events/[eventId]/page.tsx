@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import { competitions } from "@/constants";
+import { Badge } from "@/components/ui/badge";
 
 const MobileEventIdPage = () => {
   return (
@@ -236,7 +237,15 @@ const EventIdPage = async () => {
         {/* Event Name and description  */}
 
         <div>
-          <h1 className="text-2xl">Event Name</h1>
+          <h1 className="text-2xl flex justify-start items-center gap-x-4">
+            <p>Event Name</p>
+
+            <Badge className="text-xs border-green-500 bg-green-300/40 text-green-600 tracking-wide">
+              Registrations Open
+            </Badge><Badge className="text-xs border-rose-500 bg-rose-300/40 text-rose-600 tracking-wide">
+              Registrations Open
+            </Badge>
+          </h1>
           <p className="text-muted-foreground text-sm">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias
             pariatur odit ducimus repellat rerum modi, molestiae reiciendis
