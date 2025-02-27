@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   BuildingIcon,
+  CalendarIcon,
   CalendarRangeIcon,
   GraduationCapIcon,
   PaperclipIcon,
@@ -106,6 +107,66 @@ const MobileEventIdPage = () => {
           <div className="ml-2 text-primary/90">
             <li className="">College Id Card</li>
             <li className="">Subscription/Ticket Id</li>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Sub-Events  */}
+
+        <div>
+          <h2 className="text-xl">Sub Events</h2>
+          <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+            {competitions.map((competition, i) => (
+              <Accordion type="single" collapsible key={i}>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{competition.label}</AccordionTrigger>
+                  <AccordionContent>
+                    <div>
+                      <p>{competition.description}</p>
+                      <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                        <div className="flex items-center">
+                          <CalendarIcon className="size-4 mr-1" />
+                          <p>12-Jan-2025</p>
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Competitions  */}
+
+        <div>
+          <h2 className="text-xl">Competitions</h2>
+          <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+            {competitions.map((competition, i) => (
+              <Accordion type="single" collapsible key={i}>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{competition.label}</AccordionTrigger>
+                  <AccordionContent>
+                    <div>
+                      <p>{competition.description}</p>
+                      <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                        <div className="flex items-center">
+                          <TrophyIcon className="size-4 mr-1" />
+                          <p>{competition.prize}</p>
+                        </div>{" "}
+                        <div className="flex items-center">
+                          <UsersIcon className="size-4 mr-1" />
+                          <p>{competition.teamSize}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
           </div>
         </div>
 
@@ -246,6 +307,34 @@ const EventIdPage = async () => {
           <div className="ml-2 text-primary/90">
             <li className="">College Id Card</li>
             <li className="">Subscription/Ticket Id</li>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Sub-Events  */}
+
+        <div>
+          <h2 className="text-xl">Sub Events</h2>
+          <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+            {competitions.map((competition, i) => (
+              <Accordion type="single" collapsible key={i}>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{competition.label}</AccordionTrigger>
+                  <AccordionContent>
+                    <div>
+                      <p>{competition.description}</p>
+                      <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                        <div className="flex items-center">
+                          <CalendarIcon className="size-4 mr-1" />
+                          <p>12-Jan-2025</p>
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
           </div>
         </div>
 

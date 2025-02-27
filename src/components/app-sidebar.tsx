@@ -11,7 +11,11 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { sidebarGeneralItems, sidebarPrivateItems } from "@/constants";
+import {
+  sidebarGeneralItems,
+  sidebarPlatformItems,
+  sidebarPrivateItems,
+} from "@/constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -59,6 +63,30 @@ export const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarPrivateItems.map((item) => {
+                const isActive = pathname.includes(item.url);
+
+                return (
+                  <SidebarMenuItem key={item.title} className="">
+                    <SidebarMenuButton
+                      asChild
+                      className={cn("", isActive && "bg-muted-foreground/15")}
+                    >
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sidebarPlatformItems.map((item) => {
                 const isActive = pathname.includes(item.url);
 
                 return (

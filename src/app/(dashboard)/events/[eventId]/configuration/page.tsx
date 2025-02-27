@@ -15,7 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { TrophyIcon, UsersIcon, XIcon } from "lucide-react";
+import { CalendarIcon, TrophyIcon, UsersIcon, XIcon } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/accordion";
 import { competitions, rules, tags } from "@/constants";
 import { DatePickerWithRange } from "@/components/date-picker-with-range";
+import { DatePicker } from "@/components/date-picker";
 
 const ConfigurationPage = () => {
   return (
@@ -160,13 +161,57 @@ const ConfigurationPage = () => {
       </div>
       <div className="space-y-3 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl">Rating</h2>
+          <h2 className="text-xl">Stars</h2>
           <Switch className="mr-2" />
         </div>
 
         <div className="">
-          <Label>Rating</Label>
+          <Label>Stars</Label>
           <Input className="cursor-pointer" type="number" max={5} />
+        </div>
+      </div>
+
+      <div className="space-y-3 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl">Sub Events</h2>
+          <Switch className="mr-2" />
+        </div>
+
+        <div className="">
+          <Label>Event Name</Label>
+          <Input className="" placeholder="Quiz Competition" />
+        </div>
+        <div className="">
+          <Label>About Event</Label>
+          <Textarea className="" />
+        </div>
+        <div className="flex flex-col gap-y-1">
+          <Label>Date</Label>
+          <DatePicker />
+        </div>
+        <div className="flex justify-end items-center">
+          <Button>Save</Button>
+        </div>
+        <Separator />
+        <div className="mt-3 flex flex-col gap-x-3">
+          {competitions.map((competition, i) => (
+            <Accordion type="single" collapsible key={i}>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>{competition.label}</AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    <p>{competition.description}</p>
+                    <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                      <div className="flex items-center">
+                        <CalendarIcon className="size-4 mr-1" />
+                        <p>12-Jan-2025</p>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
         </div>
       </div>
 

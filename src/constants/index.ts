@@ -1,4 +1,11 @@
-import { Building, CreditCard, Home, Search } from "lucide-react";
+import {
+  Building,
+  CreditCard,
+  GaugeIcon,
+  Home,
+  Search,
+  TicketIcon,
+} from "lucide-react";
 import { Exo_2, Poppins } from "next/font/google";
 
 // Menu items.
@@ -22,9 +29,22 @@ export const sidebarPrivateItems = [
     icon: Building,
   },
   {
+    title: "Tickets",
+    url: "/tickets",
+    icon: TicketIcon,
+  },
+  {
     title: "Subscriptions",
     url: "/subscriptions",
     icon: CreditCard,
+  },
+];
+
+export const sidebarPlatformItems = [
+  {
+    title: "Billing",
+    url: "/billing",
+    icon: GaugeIcon,
   },
 ];
 
@@ -84,6 +104,8 @@ export const events = [
 export const eventTags = ["contingent", "individual"];
 
 export const isOwner = true;
+
+export const isSubscribed = false;
 
 export const exo2 = Exo_2({
   subsets: ["latin"],
