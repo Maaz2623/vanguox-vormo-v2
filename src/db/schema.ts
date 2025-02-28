@@ -24,6 +24,13 @@ export const transactionStatus = pgEnum("transaction_status", [
   "successfull",
 ]);
 
+export const subscriptionStatus = pgEnum("subscription_status", [
+  "active",
+  "expired",
+  "pending",
+  "processing",
+]);
+
 export const users = pgTable(
   "users",
   {
@@ -94,7 +101,6 @@ export const tickets = pgTable("tickets", {
   eventId: uuid("event_id")
     .references(() => events.id)
     .notNull(),
-  ticketId: uuid("ticket_id").unique().notNull(),
   status: ticketStatus().default("pending"),
   validity: timestamp("validity").notNull(),
   transactionId: uuid("transaction_id").references(() => transactions.id),
@@ -109,6 +115,20 @@ export const transactions = pgTable("transactions", {
     scale: 2,
   }).notNull(),
   status: transactionStatus().default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").unique().notNull().primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id),
+  transactionId: uuid("transaction_id")
+    .notNull()
+    .references(() => transactions.id),
+  status: subscriptionStatus().default("pending"),
+  validity: timestamp("validity").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
