@@ -6,6 +6,40 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const organziationsRouter = createTRPCRouter({
+  getOrganizationById: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string().min(1),
+      })
+    )
+    .query(async ({ input }) => {
+      const [organization] = await db
+        .select({
+          id: organizations.id,
+          slug: organizations.slug,
+          name: organizations.name,
+          logoUrl: organizations.logoUrl,
+          tagline: organizations.tagline,
+          upiId: organizations.upiId,
+          paymentGateway: organizations.paymentGateway,
+          createdAt: organizations.createdAt,
+          updatedAt: organizations.updatedAt,
+          owner: {
+            email: users.email,
+          },
+        })
+        .from(organizations)
+        .leftJoin(users, eq(organizations.owner, users.clerkId))
+        .where(eq(organizations.id, input.organizationId));
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      return organization;
+    }),
   getOrganizationBySlug: protectedProcedure
     .input(
       z.object({
