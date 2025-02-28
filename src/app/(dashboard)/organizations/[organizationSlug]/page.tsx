@@ -4,6 +4,7 @@ import { exo2, poppins } from "@/constants";
 import { cn } from "@/lib/utils";
 import OrganizationDetailsContainer from "@/modules/organizations/ui/components/organization-details-container";
 import { OrganizationStatisticsContainer } from "@/modules/organizations/ui/components/organization-statistics-container";
+import { trpc } from "@/trpc/server";
 import { BuildingIcon, CreditCardIcon, UserPlusIcon } from "lucide-react";
 import React from "react";
 
@@ -15,6 +16,18 @@ interface PageProps {
 
 const OrganizationSlug = async ({ params }: PageProps) => {
   const { organizationSlug } = await params;
+
+  const organization = await trpc.organizations.getOrganizationBySlug({
+    slug: organizationSlug,
+  });
+
+  void trpc.organizations.getOrganizationBySlug.prefetch({
+    slug: organizationSlug,
+  });
+
+  void trpc.events.getByOrganizationId.prefetch({
+    organizationId: organization.id,
+  });
 
   return (
     <div className="pb-[1000px]">
@@ -28,12 +41,12 @@ const OrganizationSlug = async ({ params }: PageProps) => {
             )}
           >
             <BuildingIcon className="mr-2 size-6 text-primary/80" />
-            The Student Forum
+            {organization.name}
           </h1>
           <p
             className={`${poppins.className} text-center text-muted-foreground text-sm`}
           >
-            The forum for the students by the students.
+            {organization.tagline}
           </p>
         </div>
 
@@ -52,7 +65,7 @@ const OrganizationSlug = async ({ params }: PageProps) => {
 
         <Separator />
 
-        <OrganizationDetailsContainer slug={organizationSlug} />
+        <OrganizationDetailsContainer organizationId={organization.id} />
       </div>
     </div>
   );

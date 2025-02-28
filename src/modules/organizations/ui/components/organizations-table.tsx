@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -13,8 +14,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { OrganizationTableActions } from "./organization-table-actions";
 import { isOwner, organizations } from "@/constants";
+import { trpc } from "@/trpc/client";
 
-const OrganizationsTable = () => {
+const OrganizationsTable = ({ clerkId }: { clerkId: string }) => {
+  const [data] = trpc.organizations.getOrganizationsByClerkId.useSuspenseQuery({
+    clerkId,
+  });
+
+  console.log(data);
+
   return (
     <div className="border rounded-lg shadow-sm overflow-hidden">
       <Table className="w-full">

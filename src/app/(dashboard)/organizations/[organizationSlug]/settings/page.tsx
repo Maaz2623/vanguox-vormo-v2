@@ -1,12 +1,22 @@
+"use client";
 import PageHeaderContainer from "@/components/page-header-container";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { trpc } from "@/trpc/client";
+import { useParams } from "next/navigation";
 import React from "react";
 
 const OrganizationSettings = () => {
+  const params = useParams();
+
+  const [data] = trpc.organizations.getOrganizationBySlug.useSuspenseQuery({
+    slug: params.organizationSlug as string,
+  });
+
+  console.log(data);
+
   return (
     <div className="space-y-4">
       <PageHeaderContainer
@@ -23,7 +33,7 @@ const OrganizationSettings = () => {
 
             <div className="">
               <Label>Event Name</Label>
-              <Input className="" defaultValue={`The Student Forum`} />
+              <Input className="" defaultValue={data.name} />
             </div>
             <div className="mt-3 space-y-1">
               <Label className="flex">
@@ -32,17 +42,8 @@ const OrganizationSettings = () => {
                   (.jpeg, .png)
                 </p>
               </Label>
-              <Input type="file" />
+              <Input type="file" defaultValue={data.logoUrl || ""} />
             </div>
-          </div>
-          <div className="space-y-3 md:w-1/3 border p-4 rounded-lg bg-neutral-50 shadow-md">
-            <div>
-              <h2 className="text-xl">Vormo Subscription</h2>
-              <p className="text-muted-foreground text-sm">
-                You don&nbsp;t have any subscriptions
-              </p>
-            </div>
-            <Button className="w-full">Buy Subscription</Button>
           </div>
         </div>
 
@@ -54,7 +55,11 @@ const OrganizationSettings = () => {
 
           <div className="">
             <Label>UPI Id</Label>
-            <Input className="" placeholder="e.g someone@oksbi" />
+            <Input
+              className=""
+              placeholder="e.g someone@oksbi"
+              defaultValue={data.upiId || ""}
+            />
           </div>
         </div>
 
@@ -68,7 +73,7 @@ const OrganizationSettings = () => {
             <Input
               className=""
               placeholder="e.g someone@oksbi"
-              defaultValue={`mohammedmaaz2623@gmail.com`}
+              defaultValue={data.owner?.email}
             />
           </div>
         </div>

@@ -45,22 +45,26 @@ export const users = pgTable(
   (t) => [uniqueIndex("clerk_id_idx").on(t.clerkId)]
 );
 
-export const organizations = pgTable("organizations", {
-  id: uuid("id").unique().notNull().primaryKey().defaultRandom(),
-  owner: text("owner")
-    .references(() => users.clerkId, {
-      onDelete: "cascade",
-    })
-    .notNull(),
-  slug: text("slug").unique().notNull(),
-  logoUrl: text("logo_url"),
-  name: text("name").notNull(),
-  tagline: text("tagline"),
-  upiId: text("upi_id").notNull(),
-  paymentGateway: boolean("payment_gateway").default(false).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const organizations = pgTable(
+  "organizations",
+  {
+    id: uuid("id").unique().notNull().primaryKey().defaultRandom(),
+    owner: text("owner")
+      .references(() => users.clerkId, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    slug: text("slug").unique().notNull(),
+    logoUrl: text("logo_url"),
+    name: text("name").notNull(),
+    tagline: text("tagline"),
+    upiId: text("upi_id"),
+    paymentGateway: boolean("payment_gateway").default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("slug_idx").on(t.slug)]
+);
 
 export const stars = pgTable("stars", {
   id: uuid("id").unique().notNull().primaryKey().defaultRandom(),

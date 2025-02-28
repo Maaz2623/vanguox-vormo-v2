@@ -2,9 +2,14 @@
 import { cn } from "@/lib/utils";
 import EventsContainer from "@/modules/events/ui/components/events-container";
 import MembersContainer from "@/modules/members/ui/components/members-container";
+import { trpc } from "@/trpc/client";
 import React, { useState } from "react";
 
-const OrganizationDetailsContainer = ({ slug }: { slug: string }) => {
+const OrganizationDetailsContainer = ({
+  organizationId,
+}: {
+  organizationId: string;
+}) => {
   const organizationDetailsContainerLinks = [
     {
       url: "/organizations/code-masters/events",
@@ -17,6 +22,10 @@ const OrganizationDetailsContainer = ({ slug }: { slug: string }) => {
       tag: "members",
     },
   ];
+
+  const [events] = trpc.events.getByOrganizationId.useSuspenseQuery({
+    organizationId: organizationId,
+  });
 
   const [isActive, setIsActive] = useState<"events" | "members">("events");
 
@@ -51,8 +60,10 @@ const OrganizationDetailsContainer = ({ slug }: { slug: string }) => {
       </div>
 
       <div className="p-3">
-        {isActive === "events" && <EventsContainer slug={slug} />}
-        {isActive === "members" && <MembersContainer slug={slug} />}
+        {isActive === "events" && (
+          <EventsContainer events={events} organizationId={organizationId} />
+        )}
+        {isActive === "members" && <MembersContainer />}
       </div>
     </div>
   );

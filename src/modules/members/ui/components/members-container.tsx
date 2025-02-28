@@ -2,8 +2,7 @@ import React from "react";
 import MembersTable from "./members-table";
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MembersContainer = ({ slug }: { slug?: string }) => {
+const MembersContainer = () => {
 
   return (
     <div className="w-full">

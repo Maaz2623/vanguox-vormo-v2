@@ -12,8 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs/server";
 
-const BillingPage = () => {
+const BillingPage = async () => {
+  const { userId } = await auth();
+
   return (
     <div>
       <PageHeaderContainer
@@ -47,7 +50,7 @@ const BillingPage = () => {
         <Button>Activate Plan</Button>
       </div>
       <div>
-        <OrganizationsTable />
+        <OrganizationsTable clerkId={userId as string} />
       </div>
     </div>
   );

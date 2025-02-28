@@ -7,17 +7,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { events } from "@/constants";
+import { events } from "@/db/schema";
+import { CreateEventModal } from "../create-event-modal";
 
 interface EventsContainerProps {
-  slug?: string;
+  events: Array<typeof events.$inferSelect>;
+  organizationId: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const EventsContainer = ({ slug }: EventsContainerProps) => {
+const EventsContainer = ({ events, organizationId }: EventsContainerProps) => {
   return (
     <div className="w-full flex-col space-y-6">
-      <div className="justify-center flex items-center h-12">
+      <div className="justify-between flex items-center h-12">
         <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Category" />
@@ -28,15 +29,11 @@ const EventsContainer = ({ slug }: EventsContainerProps) => {
             <SelectItem value="system">Solaris</SelectItem>
           </SelectContent>
         </Select>
+        <CreateEventModal organizationId={organizationId} />
       </div>
       <div className="flex justify-center items-center flex-wrap gap-x-8 gap-y-8">
-      {events.map((event) => (
-          <EventCard
-            slug={event.slug}
-            id={event.id}
-            name={event.name}
-            key={event.id}
-          />
+        {events.map((event) => (
+          <EventCard id={event.id} name={event.name} key={event.id} />
         ))}
       </div>
     </div>

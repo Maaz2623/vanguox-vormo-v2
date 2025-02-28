@@ -53,12 +53,7 @@ const HomePage = () => {
       {/* Event Cards Container  */}
       <div className=" min-h-screen flex md:justify-start justify-center flex-wrap gap-y-8 gap-x-8 p-2">
         {events.map((event) => (
-          <EventCard
-            slug={event.slug}
-            id={event.id}
-            name={event.name}
-            key={event.id}
-          />
+          <EventCard id={event.id} name={event.name} key={event.id} />
         ))}
       </div>
     </div>

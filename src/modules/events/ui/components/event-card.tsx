@@ -9,8 +9,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Link from "next/link";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const EventCard = ({ id, name, slug }: EventCardProps) => {
+const EventCard = ({ id, name }: EventCardProps) => {
   return (
     <Link href={`/events/${id}`}>
       <Card className="w-[280px] h-[300px] shadow-md hover:shadow-lg overflow-hidden cursor-pointer transition-all duration-300">

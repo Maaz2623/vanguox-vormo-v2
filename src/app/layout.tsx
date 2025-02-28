@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/trpc/client";
 import { poppins } from "@/constants";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +19,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${poppins.className} antialiased`}>
-          <TRPCProvider>{children}</TRPCProvider>
+          <TRPCProvider>
+            {children}
+            <Toaster />
+          </TRPCProvider>
         </body>
       </html>
     </ClerkProvider>
