@@ -80,22 +80,75 @@ export const stars = pgTable("stars", {
 export const events = pgTable("events", {
   id: uuid("id").notNull().unique().primaryKey().defaultRandom(),
   organizationId: uuid("organization_id")
-    .references(() => organizations.id, {
-      onDelete: "cascade",
-    })
+    .references(() => organizations.id, { onDelete: "cascade" })
     .notNull(),
   name: text("name").notNull(),
-  description: text("description"),
-  dateRange: jsonb("date_range"),
-  bannerUrl: text("banner_url"),
+  details: jsonb("details")
+    .$type<EventDetails>()
+    .default({
+      description:
+        "An exciting event with multiple activities and competitions.",
+      dateRange: {
+        from: new Date("2025-04-10T00:00:00.000Z"),
+        to: new Date("2025-04-12T23:59:59.999Z"),
+      },
+      bannerUrl: "https://example.com/default-banner.jpg",
+      audienceEligibility: {
+        enabled: true,
+        criteria: {
+          above18: false,
+          studentsOnly: true,
+        },
+      },
+      tags: ["tech", "workshop", "competition"],
+      brochure: "https://example.com/default-brochure.pdf",
+      requirements: {
+        enabled: true,
+        essentials: {
+          paymentScreenshot: true,
+          ticketId: true,
+          adhaarCard: false,
+          studentIdCard: true,
+        },
+      },
+      rulesAndRegulations: [
+        "All participants must carry a valid ID card.",
+        "The decision of the judges will be final.",
+        "Any form of misconduct will lead to disqualification.",
+      ],
+      subEvents: {
+        enabled: true,
+        events: [
+          {
+            title: "Tech Talk",
+            description: "A discussion on the latest technology trends.",
+            date: new Date("2025-04-10T10:00:00.000Z"),
+          },
+          {
+            title: "Workshop on AI",
+            description: "Hands-on session on building AI models.",
+            date: new Date("2025-04-11T14:00:00.000Z"),
+          },
+        ],
+      },
+      competitions: {
+        enabled: true,
+        competitions: [
+          {
+            title: "Coding Contest",
+            description: "Solve programming challenges in a limited time.",
+            date: new Date("2025-04-12T10:00:00.000Z"),
+          },
+          {
+            title: "Hackathon",
+            description: "A 24-hour hackathon to build innovative solutions.",
+            date: new Date("2025-04-12T12:00:00.000Z"),
+          },
+        ],
+      },
+    })
+    .notNull(), // Storing all event-related details
   stars: uuid("stars_id").references(() => stars.id),
-  audienceEligibility: jsonb("audience_eligibility"),
-  tags: text("tags").array(),
-  brochure: text("brochure"),
-  requirements: jsonb("requirements"),
-  rulesAndRegulations: text("rules_and_regulations").array(),
-  subEvents: jsonb("sub_events"),
-  competitions: jsonb("competitions"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
