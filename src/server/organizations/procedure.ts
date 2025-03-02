@@ -26,6 +26,7 @@ export const organziationsRouter = createTRPCRouter({
           updatedAt: organizations.updatedAt,
           owner: {
             email: users.email,
+            clerkId: users.clerkId,
           },
         })
         .from(organizations)

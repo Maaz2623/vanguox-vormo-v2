@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertTriangle,
   BuildingIcon,
   CalendarIcon,
   CalendarRangeIcon,
   GraduationCapIcon,
   PaperclipIcon,
+  SquareArrowOutUpRight,
   StarIcon,
   TrophyIcon,
   UsersIcon,
@@ -24,6 +26,7 @@ import { competitions } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/trpc/server";
 import { format } from "date-fns";
+import { auth } from "@clerk/nextjs/server";
 
 interface PageProps {
   params: Promise<{
@@ -216,6 +219,8 @@ const MobileEventIdPage = () => {
 const EventIdPage = async ({ params }: PageProps) => {
   const userAgent = (await headers()).get("user-agent") || "";
 
+  const { userId } = await auth();
+
   const { eventId } = await params;
 
   const event = await trpc.events.getByEventId({
@@ -225,6 +230,8 @@ const EventIdPage = async ({ params }: PageProps) => {
   const organization = await trpc.organizations.getOrganizationById({
     organizationId: event.organizationId,
   });
+
+  const isOwner = userId === organization.owner?.clerkId;
 
   void trpc.events.getByEventId.prefetch({
     eventId: event.id,
@@ -245,8 +252,16 @@ const EventIdPage = async ({ params }: PageProps) => {
       {/* Image and Buy Button  */}
       <div className="aspect-auto absolute left-0 top-0 shrink-0 rounded-lg space-y-3">
         <div className=" bg-neutral-100 h-[250px] md:h-[450px] w-[250px] md:w-[450px] rounded-lg" />
-        <div className="md:flex hidden">
-          <Button className="w-full">$150</Button>
+        <div className="md:flex hidden gap-x-3">
+          <Button className="w-full">Buy $150</Button>
+          {isOwner && (
+            <Button className="w-full" variant={`outline`} asChild>
+              <Link href={`/events/${eventId}/configuration`}>
+                Configure
+                <SquareArrowOutUpRight />
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -290,15 +305,20 @@ const EventIdPage = async ({ params }: PageProps) => {
         {/* Target Audience  */}
         {event.details.audienceEligibility.enabled && (
           <div className="flex items-center text-primary/80">
-            <GraduationCapIcon className="mr-1" />
-            <p>
-              {event.details.audienceEligibility.criteria.above18 && "18+ Only"}
-              {event.details.audienceEligibility.criteria.above18 &&
-                event.details.audienceEligibility.criteria.studentsOnly &&
-                " | "}
-              {event.details.audienceEligibility.criteria.studentsOnly &&
-                "Students Only"}
-            </p>
+            {event.details.audienceEligibility.criteria.above18 && (
+              <div className="flex">
+                <AlertTriangle className="mr-1 size-5" />
+                <p>18+ Only</p>
+              </div>
+            )}
+            {event.details.audienceEligibility.criteria.above18 &&
+              event.details.audienceEligibility.criteria.studentsOnly &&
+              " | "}
+            {event.details.audienceEligibility.criteria.studentsOnly && (
+              <div className="flex">
+                <GraduationCapIcon className="mr-1 size-5" /> <p>18+ Only</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -435,7 +455,7 @@ const EventIdPage = async ({ params }: PageProps) => {
         )}
 
         {/* Rules and Regulations  */}
-        {event.details.rulesAndRegulations && (
+        {event.details.rulesAndRegulations.length > 0 && (
           <div className="">
             <h2 className="text-xl">Rules and Regulations</h2>
             <div className="ml-2 text-primary/90">

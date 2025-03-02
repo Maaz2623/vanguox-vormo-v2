@@ -4,9 +4,8 @@ import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
+import { FileIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing";
 
 export const Brochure = ({
@@ -59,17 +58,22 @@ export const Brochure = ({
         <div className="flex items-center justify-between mt-1">
           {brochureUrl.length > 1 ? (
             <div className="w-full flex justify-center relative items-center">
-              <XIcon
-                className="absolute -top-2 p-1 rounded-full bg-white cursor-pointer border right-2"
-                onClick={() => setBrochureUrl("")}
-              />
-              <Image
-                src={brochureUrl}
-                alt="banner"
-                className="aspect-video border rounded-lg "
-                height={400}
-                width={450}
-              />
+              <div className="w-full aspect-video rounded-lg border flex justify-center items-center">
+                <div className="flex flex-col justify-center items-center">
+                  <FileIcon />
+                  <p className="text-sm text-wrap">PDF File</p>
+                  <Button
+                    onClick={() => {
+                      setBrochureUrl("");
+                      setBrochure(null);
+                    }}
+                    size={`sm`}
+                    className="bg-rose-300/80 text-rose-600 hover:bg-rose-300/80 border-rose-500 h-8 text-sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
             </div>
           ) : (
             <>

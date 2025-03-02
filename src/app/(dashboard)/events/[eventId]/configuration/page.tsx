@@ -103,23 +103,16 @@ const ConfigurationPage = () => {
   const update = trpc.events.updateEventById.useMutation();
 
   const handleUpdate = () => {
-    console.log(updatedEvent);
-    update.mutate(
-      {
-        eventId: eventId as string,
-        name: eventName,
-        details: updatedEvent,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Saved");
-        },
-        onError: (error) => {
-          toast.error("Failed to save");
-          console.log(error);
-        },
-      }
-    );
+    const mutationPromise = update.mutateAsync({
+      eventId: eventId as string,
+      name: eventName,
+      details: updatedEvent,
+    });
+    toast.promise(mutationPromise, {
+      loading: "Saving...",
+      success: "Saved successfully!",
+      error: "Failed to save",
+    });
   };
 
   const { startUpload: startBannerUpload, isUploading } = useUploadThing(
@@ -264,7 +257,9 @@ const ConfigurationPage = () => {
       />
 
       <div className="flex justify-end md:w-1/2">
-        <Button onClick={handleUpdate}>Save Configuration</Button>
+        <Button onClick={handleUpdate} disabled={update.isPending}>
+          Save Configuration
+        </Button>
       </div>
     </div>
   );

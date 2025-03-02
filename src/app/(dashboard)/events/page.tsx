@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import { events } from "@/constants";
+import { trpc } from "@/trpc/server";
 
-const HomePage = () => {
+const HomePage = async () => {
+  const events = await trpc.events.getFeedEvents();
+
   return (
     <div className="space-y-4">
       <PageHeaderContainer

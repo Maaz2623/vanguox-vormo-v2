@@ -2,10 +2,18 @@ import { db } from "@/db";
 import { events } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const eventsRouter = createTRPCRouter({
+  getFeedEvents: protectedProcedure.query(async ({}) => {
+    const data = await db
+      .select()
+      .from(events)
+      .orderBy(desc(events.updatedAt), desc(events.id));
+
+    return data;
+  }),
   updateEventById: protectedProcedure
     .input(
       z.object({
@@ -17,7 +25,7 @@ export const eventsRouter = createTRPCRouter({
             from: z.coerce.date(),
             to: z.coerce.date(),
           }),
-          bannerUrl: z.string().url(),
+          bannerUrl: z.string(),
           audienceEligibility: z.object({
             enabled: z.boolean(),
             criteria: z.object({
@@ -26,7 +34,7 @@ export const eventsRouter = createTRPCRouter({
             }),
           }),
           tags: z.array(z.string()),
-          brochure: z.string().url(),
+          brochure: z.string(),
           requirements: z.object({
             enabled: z.boolean(),
             essentials: z.object({
