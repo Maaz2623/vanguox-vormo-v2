@@ -20,6 +20,9 @@ export const eventsRouter = createTRPCRouter({
         eventId: z.string(),
         name: z.string(),
         rating: z.string().nullish(),
+        price: z.string().nullish(),
+        registrationsStatus: z.boolean().nullish(),
+        maxRegistrations: z.string().nullish(),
         details: z.object({
           description: z.string(),
           dateRange: z.object({
@@ -78,6 +81,9 @@ export const eventsRouter = createTRPCRouter({
           name: input.name,
           details: details,
           rating: input.rating,
+          price: Number(input.price),
+          registrationsStatus: input.registrationsStatus,
+          maxRegistrations: Number(input.maxRegistrations),
         })
         .where(eq(events.id, input.eventId))
         .returning(); // Ensure updated record is returned

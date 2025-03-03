@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const ConfigurationPage = () => {
   const { eventId } = useParams();
@@ -113,6 +114,14 @@ const ConfigurationPage = () => {
 
   const utils = trpc.useUtils();
 
+  const [price, setPrice] = useState(event.price?.toString() || null);
+  const [registrationsOpen, setRegistrationsOpen] = useState(
+    event.registrationsStatus
+  );
+  const [maxRegistrations, setMaxRegistrations] = useState(
+    event.maxRegistrations?.toString() || null
+  );
+
   const handleUpdate = () => {
     const mutationPromise = update.mutateAsync(
       {
@@ -120,10 +129,17 @@ const ConfigurationPage = () => {
         name: eventName,
         details: updatedEvent,
         rating: newRating,
+        registrationsStatus: registrationsOpen,
+        price: price === "" ? null : price,
+        maxRegistrations: maxRegistrations === "" ? null : maxRegistrations,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           utils.events.invalidate();
+          console.log(data);
+        },
+        onError: (error) => {
+          console.log(error);
         },
       }
     );
@@ -172,6 +188,19 @@ const ConfigurationPage = () => {
       <Separator />
 
       <div className="space-y-4 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
+        <h2 className="text-xl">Event Status</h2>
+
+        <div className="flex justify-start items-center">
+          <Switch
+            className="mr-2"
+            defaultChecked={registrationsOpen as boolean}
+            onCheckedChange={() => setRegistrationsOpen(!registrationsOpen)}
+          />
+          <p>Enable event registrations</p>
+        </div>
+      </div>
+
+      <div className="space-y-4 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
         <h2 className="text-xl">Basic Information</h2>
 
         <div className="">
@@ -184,7 +213,7 @@ const ConfigurationPage = () => {
             />
             <Select
               onValueChange={setNewRating}
-              defaultValue={event.rating || "No rating"}
+              defaultValue={(newRating && newRating) || undefined}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Rating" />
@@ -211,6 +240,28 @@ const ConfigurationPage = () => {
           <Label>Event Date</Label>
           <DatePickerWithRange date={date} setDate={setDate} />
         </div>
+        <div>
+          <Label>Event Price</Label>
+          <Input
+            className="w-full"
+            value={price || ""}
+            placeholder="Tickets Price"
+            onChange={(e) => setPrice(e.target.value || null)}
+            type="number"
+          />
+        </div>
+
+        <div>
+          <Label>Maximum Registrations</Label>
+          <Input
+            className="w-full"
+            value={maxRegistrations || ""}
+            placeholder="Tickets Price"
+            onChange={(e) => setMaxRegistrations(e.target.value || null)}
+            type="number"
+          />
+        </div>
+
         <div className="mt-3">
           <Label className="flex">
             Banner{" "}

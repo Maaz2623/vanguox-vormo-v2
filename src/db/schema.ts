@@ -1,5 +1,6 @@
 import {
   boolean,
+  integer,
   jsonb,
   numeric,
   pgEnum,
@@ -112,9 +113,9 @@ export const events = pgTable("events", {
     })
     .notNull(), // Storing all event-related details
   rating: numeric("rating"),
-  maxRegistrations: numeric("max_registrations"),
+  maxRegistrations: integer("max_registrations"),
   registrationsStatus: boolean("registraions_status"),
-  price: numeric("price"),
+  price: integer("price"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

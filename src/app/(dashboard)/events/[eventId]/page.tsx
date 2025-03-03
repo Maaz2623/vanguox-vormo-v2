@@ -327,7 +327,9 @@ const EventIdPage = async ({ params }: PageProps) => {
           </div>
         )}
         <div className="md:flex hidden gap-x-3">
-          <Button className="w-full">Buy $150</Button>
+          <Button disabled={!event.price} className="w-full">
+            {event.price ? event.price : "Not set"}
+          </Button>
           {isOwner && (
             <Button className="w-full" variant={`outline`} asChild>
               <Link href={`/events/${eventId}/configuration`}>
