@@ -9,8 +9,6 @@ import {
   PaperclipIcon,
   SquareArrowOutUpRight,
   StarIcon,
-  TrophyIcon,
-  UsersIcon,
 } from "lucide-react";
 import { headers } from "next/headers";
 import {
@@ -22,11 +20,12 @@ import {
 
 import Link from "next/link";
 import React from "react";
-import { competitions } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/trpc/server";
 import { format } from "date-fns";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
+import { events } from "@/db/schema";
 
 interface PageProps {
   params: Promise<{
@@ -34,25 +33,49 @@ interface PageProps {
   }>;
 }
 
-const MobileEventIdPage = () => {
+const MobileEventIdPage = ({
+  isOwner,
+  event,
+  rating,
+  organizationSlug,
+}: {
+  userId: string | null;
+  eventId: string;
+  event: typeof events.$inferSelect;
+  isOwner: boolean;
+  rating: string | null;
+  organizationSlug: string;
+}) => {
   return (
     <div className="">
       {/* Image and Buy Button  */}
       <div className="aspect-auto shrink-0 rounded-lg flex justify-center items-center space-y-3">
-        <div className=" bg-neutral-100 h-[320px] w-full md:w-[450px] rounded-lg" />
+        {event.details.bannerUrl.length > 0 ? (
+          <Image
+            src={event.details.bannerUrl}
+            alt="banner"
+            width={500}
+            height={500}
+            className=" bg-neutral-100 h-[320px] w-full md:w-[450px] rounded-lg"
+          />
+        ) : (
+          <div className="bg-neutral-100 h-[320px] w-full md:w-[450px] rounded-lg flex justify-center items-center">
+            <p className="text-neutral-600">No Image</p>
+          </div>
+        )}
       </div>
 
       <div className="py-3 md:ml-[450px] space-y-4">
         {/* Event Name and description  */}
 
         <div>
-          <h1 className="text-2xl">Event Name</h1>
+          <h1 className="text-2xl">{event.name}</h1>
         </div>
 
         {/* Organization Link */}
 
         <Link
-          href={`/organizations/tsf`}
+          href={`/organizations/${organizationSlug}`}
           className="flex items-center text-primary/90 hover:underline-offset-1 hover:underline cursor-pointer"
         >
           <BuildingIcon className="size-5 mr-1" />
@@ -61,156 +84,186 @@ const MobileEventIdPage = () => {
 
         {/* Rating  */}
 
-        <div className="bg-neutral-200 rounded-md w-fit px-1">
-          <div className="flex items-center justify-center">
-            <span className="text-sm">4.5</span>
-            <StarIcon className="size-4" fill="black" strokeWidth={0.3} />
+        {rating && (
+          <div className="bg-neutral-200 rounded-md w-fit px-1">
+            <div className="flex items-center justify-center">
+              <span className="text-sm">{rating}</span>
+              <StarIcon className="size-4" fill="black" strokeWidth={0.3} />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Target Audience  */}
-        <div className="flex justify-start items-center text-primary/80">
-          <GraduationCapIcon className="mr-1" />
-          <p className="">Students only</p>
-        </div>
+        {event.details.audienceEligibility.enabled && (
+          <div className="flex items-center text-primary/80 gap-x-4">
+            {event.details.audienceEligibility.criteria.above18 && (
+              <div className="flex">
+                <AlertTriangle className="mr-1 size-5" />
+                <p>18+ Only</p>
+              </div>
+            )}
+            {event.details.audienceEligibility.criteria.above18 &&
+              event.details.audienceEligibility.criteria.studentsOnly &&
+              " | "}
+            {event.details.audienceEligibility.criteria.studentsOnly && (
+              <div className="flex">
+                <GraduationCapIcon className="mr-1 size-5" />{" "}
+                <p>Students only</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Date  */}
-        <div className="flex justify-start items-center text-primary/90">
-          <CalendarRangeIcon className="size-4 mr-1" />
-          <p>20th &ndash; 26th January 2025</p>
-        </div>
+        {event.details.dateRange && (
+          <div className="flex items-center text-primary/90">
+            <CalendarRangeIcon className="size-4 mr-1" />
+            <p>{`${format(
+              event.details.dateRange.from,
+              "dd MMM yyyy"
+            )} - ${format(event.details.dateRange.to, "dd MMM yyyy")}`}</p>
+          </div>
+        )}
 
         {/* Brochure  */}
-        <Link
-          href={`/organizations/tsf`}
-          className="flex justify-start items-center text-primary/90 hover:underline underline-offset-1"
-        >
-          <PaperclipIcon className="size-4 mr-1" />
-          <p>Brochure</p>
-        </Link>
+        {event.details.brochure && (
+          <>
+            <Link
+              href={event.details.brochure}
+              target="_blank"
+              className="flex justify-start items-center text-primary/90 hover:underline underline-offset-1"
+            >
+              <PaperclipIcon className="size-4 mr-1" />
+              <p>Brochure</p>
+            </Link>
+          </>
+        )}
 
         <Button className="w-full">$250</Button>
+        {isOwner && (
+          <Button className="w-full" variant={`outline`} asChild>
+            <Link href={`/events/${event.id}/configuration`}>
+              Configure <SquareArrowOutUpRight />
+            </Link>
+          </Button>
+        )}
 
         <Separator />
 
         {/* About Event  */}
-        <div>
-          <h2 className="text-xl text-primary">About Event</h2>
-          <p className="text-primary/90">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum
-            laboriosam ut veniam culpa nulla nemo temporibus atque. Corrupti
-            quod hic voluptatum aut natus quibusdam nisi quia? Deleniti
-            laudantium temporibus exercitationem officia adipisci ducimus
-            accusantium dolores ut hic a dolor amet nihil quaerat, quas fugiat
-            nobis tempora, illum quia, ex minima.
-          </p>
-        </div>
+        {event.details.description.length > 0 && (
+          <>
+            <div>
+              <h2 className="text-xl text-primary">About Event</h2>
+              <p className="text-primary/90">{event.details.description}</p>
+            </div>
+          </>
+        )}
 
         <Separator />
 
         {/* Requirements  */}
-        <div className="">
-          <h2 className="text-xl">Requirements</h2>
-          <div className="ml-2 text-primary/90">
-            <li className="">College Id Card</li>
-            <li className="">Subscription/Ticket Id</li>
-          </div>
-        </div>
-
-        <Separator />
+        {event.details.requirements.enabled && (
+          <>
+            <div>
+              <h2 className="text-xl">Requirements</h2>
+              <ul className="ml-2 text-primary/90">
+                {event.details.requirements.essentials.paymentScreenshot && (
+                  <li>Payment Screenshot</li>
+                )}
+                {event.details.requirements.essentials.ticketId && (
+                  <li>Ticket ID</li>
+                )}
+                {event.details.requirements.essentials.adhaarCard && (
+                  <li>Aadhaar Card</li>
+                )}
+                {event.details.requirements.essentials.studentIdCard && (
+                  <li>Student ID Card</li>
+                )}
+              </ul>
+            </div>
+            <Separator />
+          </>
+        )}
 
         {/* Sub-Events  */}
-
-        <div>
-          <h2 className="text-xl">Sub Events</h2>
-          <div className="px-4 py-2 bg-neutral-100 rounded-lg">
-            {competitions.map((competition, i) => (
-              <Accordion type="single" collapsible key={i}>
-                <AccordionItem value="item-1">
-                  <AccordionTrigger>{competition.label}</AccordionTrigger>
-                  <AccordionContent>
-                    <div>
-                      <p>{competition.description}</p>
-                      <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
-                        <div className="flex items-center">
-                          <CalendarIcon className="size-4 mr-1" />
-                          <p>12-Jan-2025</p>
-                        </div>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </div>
-        </div>
-
-        <Separator />
+        {event.details.subEvents.enabled &&
+          event.details.subEvents.events.length > 0 && (
+            <>
+              <div>
+                <h2 className="text-xl">Sub Events</h2>
+                <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+                  {event.details.subEvents.events.map((subEvent, i) => (
+                    <Accordion type="single" collapsible key={i}>
+                      <AccordionItem value={`item-${i}`}>
+                        <AccordionTrigger>{subEvent.title}</AccordionTrigger>
+                        <AccordionContent>
+                          <p>{subEvent.description}</p>
+                          <div className="mt-2 flex items-center gap-x-4 text-primary/80">
+                            <CalendarIcon className="size-4 mr-1" />
+                            <p>{format(subEvent.date, "yyyy")}</p>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  ))}
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
 
         {/* Competitions  */}
+        {event.details.competitions.enabled &&
+          event.details.competitions.competitions.length > 0 && (
+            <>
+              <div>
+                <h2 className="text-xl">Competitions</h2>
 
-        <div>
-          <h2 className="text-xl">Competitions</h2>
-          <div className="px-4 py-2 bg-neutral-100 rounded-lg">
-            {competitions.map((competition, i) => (
-              <Accordion type="single" collapsible key={i}>
-                <AccordionItem value="item-1">
-                  <AccordionTrigger>{competition.label}</AccordionTrigger>
-                  <AccordionContent>
-                    <div>
-                      <p>{competition.description}</p>
-                      <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
-                        <div className="flex items-center">
-                          <TrophyIcon className="size-4 mr-1" />
-                          <p>{competition.prize}</p>
-                        </div>{" "}
-                        <div className="flex items-center">
-                          <UsersIcon className="size-4 mr-1" />
-                          <p>{competition.teamSize}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </div>
-        </div>
+                <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+                  {event.details.competitions.competitions.map(
+                    (competition, i) => (
+                      <Accordion type="single" collapsible key={i}>
+                        <AccordionItem value="item-1">
+                          <AccordionTrigger>
+                            {competition.title}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div>
+                              <p>{competition.description}</p>
+                              <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                                <div className="flex items-center">
+                                  <CalendarIcon className="size-4 mr-1" />
+                                  <p>{format(competition.date, "yyyy")}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    )
+                  )}
+                </div>
+              </div>
 
-        <Separator />
+              <Separator />
+            </>
+          )}
 
         {/* Rules and Regulations  */}
-        <div className="">
-          <h2 className="text-xl">Rules and Regulations</h2>
-          <div className="ml-2 text-primary/90">
-            <li className="">College ID Card is mandatory for entry.</li>
-            <li className="">
-              Subscription/Ticket ID must be presented at the entrance.
-            </li>
-            <li className="">
-              Participants must adhere to the event schedule.
-            </li>
-            <li className="">
-              Respect all attendees, organizers, and venue staff.
-            </li>
-            <li className="">
-              Use of offensive language or behavior will not be tolerated.
-            </li>
-            <li className="">
-              Any form of misconduct may result in disqualification or removal.
-            </li>
-            <li className="">
-              Mobile phones must be kept on silent mode during sessions.
-            </li>
-            <li className="">
-              Photography and videography are allowed only in designated areas.
-            </li>
-            <li className="">Outside food and beverages are not permitted.</li>
-            <li className="">
-              The decision of the organizers will be final in all matters.
-            </li>
+        {/* Rules and Regulations  */}
+        {event.details.rulesAndRegulations.length > 0 && (
+          <div className="">
+            <h2 className="text-xl">Rules and Regulations</h2>
+            <div className="ml-2 text-primary/90">
+              {event.details.rulesAndRegulations.map((rule, i) => (
+                <li className="" key={i}>
+                  {rule}
+                </li>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -244,14 +297,35 @@ const EventIdPage = async ({ params }: PageProps) => {
     );
 
   if (isMobile) {
-    return <MobileEventIdPage />;
+    return (
+      <MobileEventIdPage
+        organizationSlug={organization.slug}
+        event={event}
+        eventId={eventId}
+        userId={userId}
+        rating={event.rating}
+        isOwner={isOwner}
+      />
+    );
   }
 
   return (
     <div className="relative">
       {/* Image and Buy Button  */}
-      <div className="aspect-auto absolute left-0 top-0 shrink-0 rounded-lg space-y-3">
-        <div className=" bg-neutral-100 h-[250px] md:h-[450px] w-[250px] md:w-[450px] rounded-lg" />
+      <div className="aspect-auto absolute left-0 top-0 shrink-0 rounded-lg space-y-6">
+        {event.details.bannerUrl.length > 0 ? (
+          <Image
+            src={event.details.bannerUrl}
+            alt="banner"
+            width={500}
+            height={500}
+            className=" bg-neutral-100  border-neutral-700 h-[250px] md:h-[450px] w-[250px] md:w-[450px] rounded-lg"
+          />
+        ) : (
+          <div className="bg-neutral-100 text-neutral-600 border-neutral-700 h-[250px] md:h-[450px] w-[250px] md:w-[450px] rounded-lg flex justify-center items-center">
+            <p>No Image</p>
+          </div>
+        )}
         <div className="md:flex hidden gap-x-3">
           <Button className="w-full">Buy $150</Button>
           {isOwner && (
@@ -293,10 +367,10 @@ const EventIdPage = async ({ params }: PageProps) => {
 
         {/* Rating  */}
 
-        {event.stars && (
+        {event.rating && (
           <div className="bg-neutral-200 rounded-md w-fit px-1">
             <div className="flex items-center justify-center">
-              <span className="text-sm">4.5</span>
+              <span className="text-sm">{event.rating}</span>
               <StarIcon className="size-4" fill="black" strokeWidth={0.3} />
             </div>
           </div>
@@ -304,7 +378,7 @@ const EventIdPage = async ({ params }: PageProps) => {
 
         {/* Target Audience  */}
         {event.details.audienceEligibility.enabled && (
-          <div className="flex items-center text-primary/80">
+          <div className="flex items-center text-primary/80 gap-x-4">
             {event.details.audienceEligibility.criteria.above18 && (
               <div className="flex">
                 <AlertTriangle className="mr-1 size-5" />
@@ -316,7 +390,8 @@ const EventIdPage = async ({ params }: PageProps) => {
               " | "}
             {event.details.audienceEligibility.criteria.studentsOnly && (
               <div className="flex">
-                <GraduationCapIcon className="mr-1 size-5" /> <p>18+ Only</p>
+                <GraduationCapIcon className="mr-1 size-5" />{" "}
+                <p>Students only</p>
               </div>
             )}
           </div>
@@ -327,10 +402,10 @@ const EventIdPage = async ({ params }: PageProps) => {
         {event.details.dateRange && (
           <div className="flex items-center text-primary/90">
             <CalendarRangeIcon className="size-4 mr-1" />
-            <p>{`${format(event.details.dateRange.from, "yyyy")} / ${format(
-              event.details.dateRange.to,
-              "yyyy"
-            )}`}</p>
+            <p>{`${format(
+              event.details.dateRange.from,
+              "dd, MMM, yyyy"
+            )} - ${format(event.details.dateRange.to, "dd, MMM, yyyy")}`}</p>
           </div>
         )}
 
@@ -339,7 +414,8 @@ const EventIdPage = async ({ params }: PageProps) => {
         {event.details.brochure && (
           <>
             <Link
-              href={`/organizations/tsf`}
+              href={event.details.brochure}
+              target="_blank"
               className="flex justify-start items-center text-primary/90 hover:underline underline-offset-1"
             >
               <PaperclipIcon className="size-4 mr-1" />
@@ -352,18 +428,11 @@ const EventIdPage = async ({ params }: PageProps) => {
 
         {/* About Event  */}
 
-        {event.details.description && (
+        {event.details.description.length > 0 && (
           <>
             <div>
               <h2 className="text-xl text-primary">About Event</h2>
-              <p className="text-primary/90">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum
-                laboriosam ut veniam culpa nulla nemo temporibus atque. Corrupti
-                quod hic voluptatum aut natus quibusdam nisi quia? Deleniti
-                laudantium temporibus exercitationem officia adipisci ducimus
-                accusantium dolores ut hic a dolor amet nihil quaerat, quas
-                fugiat nobis tempora, illum quia, ex minima.
-              </p>
+              <p className="text-primary/90">{event.details.description}</p>
             </div>
 
             <Separator />
@@ -394,65 +463,69 @@ const EventIdPage = async ({ params }: PageProps) => {
         )}
 
         {/* Sub-Events  */}
-        {event.details.subEvents.enabled && (
-          <>
-            <div>
-              <h2 className="text-xl">Sub Events</h2>
-              <div className="px-4 py-2 bg-neutral-100 rounded-lg">
-                {event.details.subEvents.events.map((subEvent, i) => (
-                  <Accordion type="single" collapsible key={i}>
-                    <AccordionItem value={`item-${i}`}>
-                      <AccordionTrigger>{subEvent.title}</AccordionTrigger>
-                      <AccordionContent>
-                        <p>{subEvent.description}</p>
-                        <div className="mt-2 flex items-center gap-x-4 text-primary/80">
-                          <CalendarIcon className="size-4 mr-1" />
-                          <p>{format(subEvent.date, "yyyy")}</p>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                ))}
-              </div>
-            </div>
-            <Separator />
-          </>
-        )}
-
-        {/* Competitions  */}
-
-        {event.details.competitions.enabled && (
-          <>
-            <div>
-              <h2 className="text-xl">Competitions</h2>
-
-              <div className="px-4 py-2 bg-neutral-100 rounded-lg">
-                {event.details.competitions.competitions.map(
-                  (competition, i) => (
+        {event.details.subEvents.enabled &&
+          event.details.subEvents.events.length > 0 && (
+            <>
+              <div>
+                <h2 className="text-xl">Sub Events</h2>
+                <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+                  {event.details.subEvents.events.map((subEvent, i) => (
                     <Accordion type="single" collapsible key={i}>
-                      <AccordionItem value="item-1">
-                        <AccordionTrigger>{competition.title}</AccordionTrigger>
+                      <AccordionItem value={`item-${i}`}>
+                        <AccordionTrigger>{subEvent.title}</AccordionTrigger>
                         <AccordionContent>
-                          <div>
-                            <p>{competition.description}</p>
-                            <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
-                              <div className="flex items-center">
-                                <CalendarIcon className="size-4 mr-1" />
-                                <p>{format(competition.date, "yyyy")}</p>
-                              </div>
-                            </div>
+                          <p>{subEvent.description}</p>
+                          <div className="mt-2 flex items-center gap-x-4 text-primary/80">
+                            <CalendarIcon className="size-4 mr-1" />
+                            <p>{format(subEvent.date, "yyyy")}</p>
                           </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
-                  )
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
+              <Separator />
+            </>
+          )}
 
-            <Separator />
-          </>
-        )}
+        {/* Competitions  */}
+
+        {event.details.competitions.enabled &&
+          event.details.competitions.competitions.length > 0 && (
+            <>
+              <div>
+                <h2 className="text-xl">Competitions</h2>
+
+                <div className="px-4 py-2 bg-neutral-100 rounded-lg">
+                  {event.details.competitions.competitions.map(
+                    (competition, i) => (
+                      <Accordion type="single" collapsible key={i}>
+                        <AccordionItem value="item-1">
+                          <AccordionTrigger>
+                            {competition.title}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div>
+                              <p>{competition.description}</p>
+                              <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
+                                <div className="flex items-center">
+                                  <CalendarIcon className="size-4 mr-1" />
+                                  <p>{format(competition.date, "yyyy")}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+            </>
+          )}
 
         {/* Rules and Regulations  */}
         {event.details.rulesAndRegulations.length > 0 && (

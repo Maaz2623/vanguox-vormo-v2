@@ -5,7 +5,14 @@ import { cn } from "@/lib/utils";
 import OrganizationDetailsContainer from "@/modules/organizations/ui/components/organization-details-container";
 import { OrganizationStatisticsContainer } from "@/modules/organizations/ui/components/organization-statistics-container";
 import { trpc } from "@/trpc/server";
-import { BuildingIcon, CreditCardIcon, UserPlusIcon } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
+import {
+  BuildingIcon,
+  CreditCardIcon,
+  SettingsIcon,
+  UserPlusIcon,
+} from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface PageProps {
@@ -16,6 +23,8 @@ interface PageProps {
 
 const OrganizationSlug = async ({ params }: PageProps) => {
   const { organizationSlug } = await params;
+
+  const { userId } = await auth();
 
   const organization = await trpc.organizations.getOrganizationBySlug({
     slug: organizationSlug,
@@ -28,6 +37,8 @@ const OrganizationSlug = async ({ params }: PageProps) => {
   void trpc.events.getByOrganizationId.prefetch({
     organizationId: organization.id,
   });
+
+  const isOwner = organization.owner?.clerkId === userId;
 
   return (
     <div className="pb-[1000px]">
@@ -53,14 +64,30 @@ const OrganizationSlug = async ({ params }: PageProps) => {
         <OrganizationStatisticsContainer />
 
         <div className="p-3 w-full flex flex-col space-y-3 justify-center items-center">
-          <Button size={`sm`} className="w-[250px]">
-            <UserPlusIcon className="size-5" />
-            Join
-          </Button>
-          <Button size={`sm`} className="w-[250px]" variant={`outline`}>
-            <CreditCardIcon className="size-5" />
-            Subscribe
-          </Button>
+          {!isOwner ? (
+            <>
+              <Button size={`sm`} className="w-[250px]">
+                <UserPlusIcon className="size-5" />
+                Join
+              </Button>
+              <Button size={`sm`} className="w-[250px]" variant={`outline`}>
+                <CreditCardIcon className="size-5" />
+                Subscribe
+              </Button>
+            </>
+          ) : (
+            <Button
+              size={`sm`}
+              className="w-[250px]"
+              variant={`outline`}
+              asChild
+            >
+              <Link href={`/organizations/${organization.slug}/settings`}>
+                <SettingsIcon className="size-5" />
+                Settings
+              </Link>
+            </Button>
+          )}
         </div>
 
         <Separator />

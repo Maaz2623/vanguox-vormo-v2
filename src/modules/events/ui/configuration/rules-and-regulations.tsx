@@ -17,7 +17,6 @@ export const RulesAndRegulations = ({
   rules: string[];
   setRules: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
-  "use client";
   return (
     <div className="space-y-3 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
       <h2 className="text-xl">Rules and Regulations</h2>

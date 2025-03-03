@@ -60,22 +60,12 @@ export const organizations = pgTable(
     tagline: text("tagline"),
     upiId: text("upi_id"),
     paymentGateway: boolean("payment_gateway").default(false),
+    metadata: jsonb().$type<OrganizationMetadata>(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (t) => [uniqueIndex("slug_idx").on(t.slug)]
 );
-
-export const stars = pgTable("stars", {
-  id: uuid("id").unique().notNull().primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  organizationId: uuid("organization_id").references(() => organizations.id, {
-    onDelete: "cascade",
-  }),
-  rating: numeric("rating"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
 
 export const events = pgTable("events", {
   id: uuid("id").notNull().unique().primaryKey().defaultRandom(),
@@ -86,69 +76,45 @@ export const events = pgTable("events", {
   details: jsonb("details")
     .$type<EventDetails>()
     .default({
-      description:
-        "An exciting event with multiple activities and competitions.",
+      description: "",
       dateRange: {
         from: new Date("2025-04-10T00:00:00.000Z"),
         to: new Date("2025-04-12T23:59:59.999Z"),
       },
-      bannerUrl: "https://example.com/default-banner.jpg",
+      bannerUrl: "",
       audienceEligibility: {
-        enabled: true,
+        enabled: false,
         criteria: {
           above18: false,
-          studentsOnly: true,
+          studentsOnly: false,
         },
       },
-      tags: ["tech", "workshop", "competition"],
-      brochure: "https://example.com/default-brochure.pdf",
+      tags: [],
+      brochure: "",
       requirements: {
-        enabled: true,
+        enabled: false,
         essentials: {
-          paymentScreenshot: true,
-          ticketId: true,
+          paymentScreenshot: false,
+          ticketId: false,
           adhaarCard: false,
-          studentIdCard: true,
+          studentIdCard: false,
         },
       },
-      rulesAndRegulations: [
-        "All participants must carry a valid ID card.",
-        "The decision of the judges will be final.",
-        "Any form of misconduct will lead to disqualification.",
-      ],
+      rulesAndRegulations: [],
       subEvents: {
-        enabled: true,
-        events: [
-          {
-            title: "Tech Talk",
-            description: "A discussion on the latest technology trends.",
-            date: new Date("2025-04-10T10:00:00.000Z"),
-          },
-          {
-            title: "Workshop on AI",
-            description: "Hands-on session on building AI models.",
-            date: new Date("2025-04-11T14:00:00.000Z"),
-          },
-        ],
+        enabled: false,
+        events: [],
       },
       competitions: {
-        enabled: true,
-        competitions: [
-          {
-            title: "Coding Contest",
-            description: "Solve programming challenges in a limited time.",
-            date: new Date("2025-04-12T10:00:00.000Z"),
-          },
-          {
-            title: "Hackathon",
-            description: "A 24-hour hackathon to build innovative solutions.",
-            date: new Date("2025-04-12T12:00:00.000Z"),
-          },
-        ],
+        enabled: false,
+        competitions: [],
       },
     })
     .notNull(), // Storing all event-related details
-  stars: uuid("stars_id").references(() => stars.id),
+  rating: numeric("rating"),
+  maxRegistrations: numeric("max_registrations"),
+  registrationsStatus: boolean("registraions_status"),
+  price: numeric("price"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

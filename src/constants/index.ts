@@ -34,7 +34,7 @@ export const sidebarPrivateItems = [
     icon: TicketIcon,
   },
   {
-    title: "Subscriptions",
+    title: "Org Subscriptions",
     url: "/subscriptions",
     icon: CreditCard,
   },

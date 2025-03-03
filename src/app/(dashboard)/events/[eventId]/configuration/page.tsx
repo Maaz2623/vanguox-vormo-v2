@@ -22,6 +22,13 @@ import { SubEvents } from "@/modules/events/ui/configuration/subevents";
 import { Competitions } from "@/modules/events/ui/configuration/competitions";
 import { RulesAndRegulations } from "@/modules/events/ui/configuration/rules-and-regulations";
 import { useUploadThing } from "@/lib/uploadthing";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ConfigurationPage = () => {
   const { eventId } = useParams();
@@ -72,6 +79,8 @@ const ConfigurationPage = () => {
 
   const [brochureUrl, setBrochureUrl] = useState(event.details.brochure);
 
+  const [newRating, setNewRating] = useState<string | null>(event.rating);
+
   const updatedEvent: EventDetails = {
     description: description,
     dateRange: {
@@ -102,12 +111,22 @@ const ConfigurationPage = () => {
 
   const update = trpc.events.updateEventById.useMutation();
 
+  const utils = trpc.useUtils();
+
   const handleUpdate = () => {
-    const mutationPromise = update.mutateAsync({
-      eventId: eventId as string,
-      name: eventName,
-      details: updatedEvent,
-    });
+    const mutationPromise = update.mutateAsync(
+      {
+        eventId: eventId as string,
+        name: eventName,
+        details: updatedEvent,
+        rating: newRating,
+      },
+      {
+        onSuccess: () => {
+          utils.events.invalidate();
+        },
+      }
+    );
     toast.promise(mutationPromise, {
       loading: "Saving...",
       success: "Saved successfully!",
@@ -152,21 +171,38 @@ const ConfigurationPage = () => {
       />
       <Separator />
 
-      <div className="space-y-3 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
+      <div className="space-y-4 md:w-1/2 border p-4 rounded-lg bg-neutral-50 shadow-md">
         <h2 className="text-xl">Basic Information</h2>
 
         <div className="">
           <Label>Event Name</Label>
-          <Input
-            className=""
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-          />
+          <div className="flex gap-x-4">
+            <Input
+              className=""
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+            />
+            <Select
+              onValueChange={setNewRating}
+              defaultValue={event.rating || "No rating"}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Rating" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={"1"}>1 Stars</SelectItem>
+                <SelectItem value={"2"}>2 Stars</SelectItem>
+                <SelectItem value={"3"}>3 Stars</SelectItem>
+                <SelectItem value={"4"}>4 Stars</SelectItem>
+                <SelectItem value={"5"}>5 Stars</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div className="">
           <Label>Event Description</Label>
           <Textarea
-            className=""
+            className="min-h-32 text-neutral-700"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
@@ -184,7 +220,7 @@ const ConfigurationPage = () => {
             {bannerUrl.length > 1 ? (
               <div className="w-full flex justify-center relative items-center">
                 <XIcon
-                  className="absolute -top-2 p-1 rounded-full bg-white cursor-pointer border right-2"
+                  className="absolute -top-2 p-1 rounded-full bg-white cursor-pointer border -right-2"
                   onClick={() => setBannerUrl("")}
                 />
                 <Image
@@ -258,7 +294,7 @@ const ConfigurationPage = () => {
 
       <div className="flex justify-end md:w-1/2">
         <Button onClick={handleUpdate} disabled={update.isPending}>
-          Save Configuration
+          Save Changes
         </Button>
       </div>
     </div>

@@ -15,7 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, TrashIcon } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -126,7 +126,7 @@ export const SubEvents = ({
       </div>
       <div className="flex justify-end items-center">
         <Button
-          disabled={!isEnabled}
+          disabled={!isEnabled || newSubEvent.title === ""}
           onClick={() => {
             setSubEvents([...subEvents, newSubEvent]);
             toast.success("Sub event added");
@@ -146,7 +146,7 @@ export const SubEvents = ({
           <Accordion type="single" collapsible key={i} disabled={!isEnabled}>
             <AccordionItem value="item-1">
               <AccordionTrigger>{event.title}</AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="flex justify-between items-center">
                 <div>
                   <p>{event.description}</p>
                   <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
@@ -156,6 +156,19 @@ export const SubEvents = ({
                     </div>
                   </div>
                 </div>
+                <Button
+                  size={`icon`}
+                  className="text-red-600 hover:bg-red-300 bg-red-300/80 border-red-500"
+                  onClick={() => {
+                    setSubEvents((prevEvents) => {
+                      const updatedEvents = [...prevEvents]; // Create a copy
+                      updatedEvents.splice(i, 1); // Remove rule at index
+                      return updatedEvents; // Return new array
+                    });
+                  }}
+                >
+                  <TrashIcon className="" />
+                </Button>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

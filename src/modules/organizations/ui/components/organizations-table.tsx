@@ -2,6 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import { format } from "date-fns";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 import {
   Table,
@@ -11,17 +16,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { OrganizationTableActions } from "./organization-table-actions";
-import { isOwner, organizations } from "@/constants";
+import { isOwner } from "@/constants";
 import { trpc } from "@/trpc/client";
 
 const OrganizationsTable = ({ clerkId }: { clerkId: string }) => {
-  const [data] = trpc.organizations.getOrganizationsByClerkId.useSuspenseQuery({
-    clerkId,
-  });
-
-  console.log(data);
+  const [organizations] =
+    trpc.organizations.getOrganizationsByClerkId.useSuspenseQuery({
+      clerkId,
+    });
 
   return (
     <div className="border rounded-lg shadow-sm overflow-hidden">
@@ -33,7 +36,6 @@ const OrganizationsTable = ({ clerkId }: { clerkId: string }) => {
             </TableHead>
             <TableHead className="font-semibold">Slug</TableHead>
             <TableHead className="font-semibold">Owned by</TableHead>
-            <TableHead className="font-semibold">Status</TableHead>
             <TableHead className="font-semibold">Created At</TableHead>
             <TableHead className="font-semibold text-center">Actions</TableHead>
           </TableRow>
@@ -53,20 +55,19 @@ const OrganizationsTable = ({ clerkId }: { clerkId: string }) => {
                 </Link>
               </TableCell>
               <TableCell>{organization.slug}</TableCell>
-              <TableCell>{isOwner ? "You" : organization.ownerEmail}</TableCell>
               <TableCell>
-                {organization.active ? (
-                  <Badge className="bg-green-200/80 w-[80px] flex justify-center items-center hover:bg-green-300 border border-green-500 text-green-700 px-3 py-1">
-                    Active
-                  </Badge>
-                ) : (
-                  <Badge className="bg-rose-200/80 border w-[80px] flex justify-center items-center hover:bg-rose-300 border-rose-500 text-rose-700 px-3 py-1">
-                    Inactive
-                  </Badge>
-                )}
+                <HoverCard>
+                  <HoverCardTrigger>
+                    {isOwner ? "You" : organization.owner?.email}
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    The React Framework – created and maintained by @vercel.
+                  </HoverCardContent>
+                </HoverCard>
               </TableCell>
+
               <TableCell>
-                {format(organization.createdAt, "yyyy-MMM-dd")}
+                {format(organization.createdAt, "dd-MMMM-yyyy")}
               </TableCell>
               <TableCell className="text-center">
                 <OrganizationTableActions

@@ -1,17 +1,26 @@
 "use client";
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -119,7 +128,7 @@ export const Competitions = ({
       </div>
       <div className="flex justify-end items-center">
         <Button
-          disabled={!isEnabled}
+          disabled={!isEnabled || newCompetition.title === ""}
           onClick={() => {
             setCompetitions([...competitions, newCompetition]);
             toast.success("Competition added");
@@ -139,7 +148,7 @@ export const Competitions = ({
           <Accordion type="single" collapsible key={i} disabled={!isEnabled}>
             <AccordionItem value="item-1">
               <AccordionTrigger>{competition.title}</AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="flex justify-between items-center">
                 <div>
                   <p>{competition.description}</p>
                   <div className="mt-2 flex justify-start items-center gap-x-4 text-primary/80">
@@ -149,6 +158,19 @@ export const Competitions = ({
                     </div>
                   </div>
                 </div>
+                <Button
+                  size={`icon`}
+                  className="text-red-600 hover:bg-red-300 bg-red-300/80 border-red-500"
+                  onClick={() => {
+                    setCompetitions((prevCompetitions) => {
+                      const updatedCompetitions = [...prevCompetitions]; // Create a copy
+                      updatedCompetitions.splice(i, 1); // Remove rule at index
+                      return updatedCompetitions; // Return new array
+                    });
+                  }}
+                >
+                  <TrashIcon className="" />
+                </Button>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

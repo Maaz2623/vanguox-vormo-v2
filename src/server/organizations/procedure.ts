@@ -27,6 +27,7 @@ export const organziationsRouter = createTRPCRouter({
           owner: {
             email: users.email,
             clerkId: users.clerkId,
+            imageUrl: users.imageUrl,
           },
         })
         .from(organizations)
@@ -61,6 +62,7 @@ export const organziationsRouter = createTRPCRouter({
           updatedAt: organizations.updatedAt,
           owner: {
             email: users.email,
+            clerkId: users.clerkId,
           },
         })
         .from(organizations)
@@ -102,7 +104,23 @@ export const organziationsRouter = createTRPCRouter({
       })
     )
     .query(async () => {
-      const data = await db.select().from(organizations);
+      const data = await db
+        .select({
+          id: organizations.id,
+          slug: organizations.slug,
+          name: organizations.name,
+          logoUrl: organizations.logoUrl,
+          tagline: organizations.tagline,
+          upiId: organizations.upiId,
+          paymentGateway: organizations.paymentGateway,
+          createdAt: organizations.createdAt,
+          updatedAt: organizations.updatedAt,
+          owner: {
+            email: users.email,
+          },
+        })
+        .from(organizations)
+        .leftJoin(users, eq(organizations.owner, users.clerkId));
 
       return data;
     }),

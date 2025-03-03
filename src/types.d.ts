@@ -95,4 +95,10 @@ interface EventDetails {
   };
 }
 
+interface OrganizationMetadata {
+  kyc: {
+    panCard: string;
+  };
+}
+
 // export type EventDetailsSchema = z.infer<typeof ZodEventDetails>;

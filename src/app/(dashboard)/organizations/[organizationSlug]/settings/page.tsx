@@ -15,8 +15,6 @@ const OrganizationSettings = () => {
     slug: params.organizationSlug as string,
   });
 
-  console.log(data);
-
   return (
     <div className="space-y-4">
       <PageHeaderContainer
